@@ -23,6 +23,11 @@ outputDirs.forEach(dir => {
 app.use(express.json());
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
+// Health check route (Railway needs this to confirm app is alive)
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+});
+
 // Auth routes
 app.use('/', authRouter);
 
