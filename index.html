@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pinterest Scrapper</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+
+  <link rel="icon" type="image/png" href="assets/favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon/favicon.svg" />
+  <link rel="shortcut icon" href="assets/favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="assets/favicon/site.webmanifest" />
+
+  <link rel="icon" type="image/png" href="">
+
+</head>
+
+<body>
+
+  <div class="pinterest-grid"></div>
+  
+  <!-- Decorative circles -->
+  <div class="floating-circle circle-1"></div>
+  <div class="floating-circle circle-2"></div>
+  <div class="floating-circle circle-3"></div>
+
+  <!-- Loader overlay -->
+  <div id="loadingOverlay">
+    <div class="pinterest-loader"></div>
+    <p style="margin-top: 20px; font-weight: 600; color: #4a5568;">Processing your request...</p>
+  </div>
+
+  <!-- Toast message -->
+  <div id="statusMessage"></div>
+
+  <div class="full-screen-container">
+    <div class="form-header">
+      <h1><i class="fas fa-link"></i> Pinterest Scrapper</h1>
+      <p>Paste your Pinterest pin or board links below we’ll fetch crisp images and videos, organize them into tidy folders, and show elegant, real‑time progress as everything downloads.</p>
+      <div style="margin-top:10px; display:flex; gap:8px;">
+        <button type="button" class="btn btn-secondary" id="profileBtn"><i class="fas fa-user-cog"></i> Profile</button>
+        <button type="button" class="btn btn-secondary" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+
+    <div class="form-content">
+      <form id="streamForm">
+        <div class="input-group">
+          <label for="nameInput"><i class="fas fa-user"></i> Name</label>
+          <input type="text" id="nameInput" placeholder="Enter your name" required>
+        </div>
+
+        <div class="urls-container" id="urlsContainer"></div>
+
+        <button type="button" class="btn btn-secondary" id="addUrlBtn">
+          <i class="fas fa-plus-circle"></i> Add Another URL
+        </button>
+
+        <div class="form-footer">
+          <button type="submit" class="btn btn-primary" id="createBtn">
+            <i class="fas fa-cloud-download-alt"></i> Start Scraping
+          </button>
+          <p>Your links will be processed according to their priority order</p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Progress Section -->
+    <div class="progress-section" id="progressSection" style="display: none;">
+      <div class="progress-header">
+        <h3><i class="fas fa-chart-line"></i> Progress</h3>
+        <button type="button" class="btn-close" id="closeProgressBtn" title="Close Progress">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="progress-overview">
+        <div class="progress-item">
+          <span class="progress-label">URLs Processed:</span>
+          <span class="progress-value" id="urlsProcessed">0 / 0</span>
+        </div>
+        <div class="progress-item">
+          <span class="progress-label">Total Images:</span>
+          <span class="progress-value" id="totalImages">0</span>
+        </div>
+        <div class="progress-item">
+          <span class="progress-label">Total Videos:</span>
+          <span class="progress-value" id="totalVideos">0</span>
+        </div>
+        <div class="progress-item">
+          <span class="progress-label">Files Downloaded:</span>
+          <span class="progress-value" id="filesDownloaded">0</span>
+        </div>
+        <div class="progress-item">
+          <span class="progress-label">Videos Muted:</span>
+          <span class="progress-value" id="videosMuted">0</span>
+        </div>
+        <div class="progress-item">
+          <span class="progress-label">Status:</span>
+          <span class="progress-status" id="currentStatus">Ready</span>
+        </div>
+      </div>
+
+      <div class="progress-bars">
+        <div class="progress-group">
+          <label><i class="fas fa-search"></i> Scraping Progress</label>
+          <div class="progress-bar">
+            <div class="progress-fill" id="scrapingProgress"></div>
+          </div>
+          <span class="progress-text" id="scrapingText">0%</span>
+        </div>
+
+        <div class="progress-group download-progress">
+          <label><i class="fas fa-download"></i> Download Progress</label>
+          <div class="progress-bar">
+            <div class="progress-fill" id="downloadProgress"></div>
+          </div>
+          <span class="progress-text" id="downloadText">0%</span>
+        </div>
+        <div class="progress-group mute-progress">
+          <label><i class="fas fa-volume-mute"></i> Mute Progress</label>
+          <div class="progress-bar">
+            <div class="progress-fill" id="muteProgress"></div>
+          </div>
+          <span class="progress-text" id="muteText">0%</span>
+        </div>
+      </div>
+
+      <div class="progress-details" id="progressDetails">
+        <h4><i class="fas fa-tasks"></i> Current Activity:</h4>
+        <div class="activity-log" id="activityLog"></div>
+      </div>
+
+      <div class="current-session" id="currentSession" style="margin-top: 16px;">
+        <h4><i class="fas fa-bolt"></i> Current Session Items</h4>
+        <div class="gallery-grid" id="currentSessionGrid"></div>
+      </div>
+    </div>
+
+    <!-- Gallery Section -->
+    <div class="gallery-section" id="gallerySection" style="display: none;">
+      <div class="gallery-header">
+        <h3><i class="fas fa-images"></i> Downloaded Wallpapers</h3>
+        <button type="button" class="btn-secondary" id="refreshGalleryBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+      </div>
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </div>
+  </div>
+
+  <template id="urlRowTemplate">
+    <div class="url-row">
+      <span class="url-label"></span>
+      <!-- Set type to url, add pattern for validation -->
+      <input type="url" class="url-input" placeholder="Enter Pinterest URL" required pattern="https?://.+">
+      <button type="button" class="remove-btn">Remove</button>
+    </div>
+  </template>
+
+  <div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true">
+    <div class="lightbox-content">
+      <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close"><i class="fas fa-times"></i></button>
+      <div id="lightboxInner"></div>
+    </div>
+  </div>
+
+  <!-- Profile Modal -->
+  <div class="lightbox-overlay" id="profileModal" role="dialog" aria-modal="true" style="display:none;">
+    <div class="lightbox-content profile-modal" style="max-width:480px; width:100%;">
+      <button type="button" class="lightbox-close" id="profileClose" aria-label="Close"><i class="fas fa-times"></i></button>
+      <div style="background:#fff; padding:22px; border-radius:16px;">
+        <div class="modal-header">
+          <h3 style="margin:0; display:flex; align-items:center; gap:10px; color:#2d3748;"><i class="fas fa-user-cog" style="color:#e60023;"></i> Update Profile</h3>
+        </div>
+        <div class="stepper">
+          <span class="step step-1 active"><i class="fas fa-shield-alt"></i> Verify</span>
+          <span class="step step-2"><i class="fas fa-edit"></i> Update</span>
+        </div>
+        <form id="profileForm">
+          <!-- Step 1: verify current password -->
+          <div id="verifyStep">
+            <div class="input-group">
+              <label for="currentPassword"><i class="fas fa-lock"></i> Current Password</label>
+              <input type="password" id="currentPassword" placeholder="Enter current password" required>
+              <div class="field-error" id="currentPasswordError">Current password is incorrect.</div>
+              <div class="hint">Enter your current password to continue.</div>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn btn-secondary" id="profileCancel">Cancel</button>
+              <button type="button" class="btn btn-primary" id="verifyBtn">Verify</button>
+            </div>
+          </div>
+
+          <!-- Step 2: update email/password -->
+          <div id="updateStep" style="display:none;">
+            <div class="input-group">
+              <label for="profileEmail"><i class="fas fa-envelope"></i> Email</label>
+              <input type="email" id="profileEmail" placeholder="Enter email" required>
+              <div class="field-error" id="emailError">Enter a valid email like name@example.com.</div>
+            </div>
+            <div class="input-group">
+              <label for="profilePassword"><i class="fas fa-lock"></i> New Password</label>
+              <input type="password" id="profilePassword" placeholder="Enter new password" required>
+              <div class="field-error" id="passwordError">Password must be at least 8 characters.</div>
+              <div class="hint">Use at least 8 characters. Avoid common words.</div>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn btn-secondary" id="backToVerify">Back</button>
+              <button type="submit" class="btn btn-primary" id="profileSave">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/script.js"></script>
+
+</body>
+
+</html>
