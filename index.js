@@ -34,7 +34,7 @@ app.use('/', authRouter);
 // Protected routes
 app.use('/scrape', requireAuth, scrapeRouter);
 
-app.get('/', requireAuth, (req, res) => {
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
